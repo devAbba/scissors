@@ -32,6 +32,7 @@ app.use(
       contentSecurityPolicy: {
         directives: {
             "script-src": ["'self'", "'unsafe-inline'", 'cdn.jsdelivr.net'],
+            "script-src-attr": ["'unsafe-inline'"],
             "style-src": ["'self'", 'fonts.googleapis.com', 'cdn.jsdelivr.net'],
             "img-src": ["'self'", "data:", 'res.cloudinary.com']
         },

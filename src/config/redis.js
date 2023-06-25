@@ -3,6 +3,7 @@ require('dotenv').config();
 
 const REDIS_URL = process.env.REDIS_URL
 
+
 class Cache {
     constructor() {
         this.redis = null;

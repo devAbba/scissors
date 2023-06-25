@@ -1,0 +1,122 @@
+<%- include('partials/head') %>
+<body>
+    <div class="container mt-2 primary-wrapper">
+        <%- include('partials/header') %>
+        
+        <form action="/snipper" class="url-form">
+            <div class="container url-group">
+                <label for="fullUrl" class="visually-hidden">Url</label>
+                <input type="url" name="fullUrl" id="fullUrl" class="form-control" placeholder="Enter URL" required>
+                <button type="submit" id="snip-btn" class="btn btn-primary">Snip</button>
+            </div>
+            <div class="custo-tag">
+                <input type="text" name="tag" id="tag" class="form-control" placeholder="custom tag">
+            </div>
+        </form>
+
+        <div class="container">
+            <div class="hidden" id="newURL">
+                <h5 class="lead text-center">New URL</h5>
+                <input type="text" class="form-control-sm" id="newURL_field" readonly="readonly">
+                <button type="submit" id="copy-btn" onclick="copyText()"><span class="material-symbols-outlined iconx">content_copy</span></button>  
+            </div>
+            <div class="hidden" id="canvas"></div>
+            
+        </div>
+
+        <div class="history mt-4">
+            <h4>History</h4>
+            <table class="table table-striped table-responsive mt-2">
+                <thead>
+                    <tr>
+                        <th>Full URL</th>
+                        <th>Short URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if(history){ %>
+                        <% history.forEach((shortUrl) => { %>
+                        <tr>
+                            <td>
+                                <a href="<%=shortUrl.full%>"><%= shortUrl.full %></a>
+                            </td>
+                            <td>
+                                <a href="<%=shortUrl.short%>"><%= shortUrl.short %></a>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+   
+
+    <script>
+        const form = document.querySelector('.url-form');
+        const snipBtn = document.getElementById('snip-btn')
+        const newURL = document.getElementById('newURL')
+
+        function copyText(){
+            let val = document.getElementById('newURL_field')
+            val.select()
+            document.execCommand("copy");
+        }
+
+
+        snipBtn.addEventListener('click', async function(e){
+            e.preventDefault()
+            
+            try {
+                const url = form.fullUrl.value
+                let tag = form.tag.value
+
+                //remove white spaces
+                tag = tag.replace(/\s/g, '')
+                
+                //validate custom tag
+                if (tag === ''){
+                    tag = 'empty'
+                }
+
+                if (tag.toLowerCase() === 'snipper'){
+                    alert('Prohibited! Use a different custom tag')
+                    return
+                }
+                
+                //validate url
+                const pattern = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+                if (!pattern.test(url)){
+                    alert("warning: invalid Url!")
+                    return
+                }
+
+                const res = await fetch('/snipper', {
+                    method: "POST",
+                    body: JSON.stringify({full: url, tag}),
+                    headers: { "Content-Type": "application/json" }
+                });
+                
+                const data = await res.json();
+                
+                if (data.shortUrl){
+                    //render text
+                    newURL.classList.add('newURL');
+                    document.getElementById('newURL_field').value = window.location.origin + '/' + data.shortUrl.short
+
+                    //render qr_code
+                    let canvas = document.getElementById('canvas')
+                    canvas.innerHTML = `<img src=${data.qr_code} alt=qrcode>`
+                    canvas.classList.replace('hidden', 'canvas')
+                    
+                }
+
+            } catch (error){
+                console.log(error)
+            }
+
+        })
+
+    </script>
+</body>
+</html>

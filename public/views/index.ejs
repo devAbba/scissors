@@ -1,0 +1,19 @@
+<%- include('partials/head') %>
+<body>
+    <div class="container primary-wrapper">
+        <div class="vh-container">
+            <%- include('partials/header') %>
+            <div class="container mx-auto desc">
+                <div class="desc-text">Snipper is an easy to use Url shortening service that takes your long Url and makes it easier to memorize. To get started, click the button below.</div>
+                <button type="button" class="btn btn-outline-info" onclick="start()">Get Started</button>
+            </div>
+        </div> 
+    </div>
+
+    <script>
+        function start(){
+            location.assign('/snipper')
+        }
+    </script>
+</body>
+</html>

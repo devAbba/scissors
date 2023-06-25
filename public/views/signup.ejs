@@ -1,0 +1,63 @@
+<%- include('partials/head') %>
+<body>
+    <div class="container primary-wrapper">
+        <%- include('partials/header') %>
+        <div class="form-group">
+            <form action="" id="signup-form">
+                <h4>Signup</h4>
+                <%- include('partials/form_fields') %>
+                <button type="submit" class="btn btn-success" id="signup-btn">Signup</button>
+                <p class="mt-2">Already have an account? Login <span><a href="/users/login">here</a></span></p>
+            </form>
+        </div>   
+    </div>
+
+    <script>
+        const msgDiv = document.querySelector('.message');
+        const form = document.getElementById('signup-form');
+        const signUp = document.getElementById('signup-btn');
+        signUp.addEventListener('click', async function(e){
+            e.preventDefault()
+            
+            try { 
+
+                const email = form.email.value;
+                const password = form.password.value
+                const details = {email, password}
+
+                let formBody = [];
+                for (let property in details) {
+                    let encodedKey = encodeURIComponent(property);
+                    let encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+
+                const res = await fetch('/users/signup', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+                    body: formBody
+                })
+            
+                const data = await res.json()
+
+                if (data.user){
+                    location.assign('/snipper')
+                }
+                else if (data.error){
+                    console.log(data)
+                    msgDiv.innerHTML = `<div class="alert alert-danger" role="alert">${data.error}</div>` 
+                }
+  
+            }
+            catch (error){
+                console.log(error)
+            }
+        })
+
+            
+        
+
+    </script>
+</body>
+</html>

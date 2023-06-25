@@ -1,0 +1,62 @@
+<%- include('partials/head') %>
+<body>
+    <div class="container primary-wrapper">
+        <%- include('partials/header') %>
+        <p class="lead text-center mt-4">You must be logged in to use this service</p>
+        <div class="form-group">
+            <form action="" id="login-form">
+                <h4>Login</h4>
+                <%- include('partials/form_fields') %>
+                <button class="btn btn-primary" type="submit" id="login">Login</button>
+                <p class="mt-2">Don't have an account? signup <span><a href="/users/signup">here</a></span></p>
+            </form>
+        </div>  
+    </div>
+
+    <script>
+        //hide password help
+        const passwordHelp = document.getElementById('passwordHelpBlock')
+        passwordHelp.classList.replace('form-text', 'hidden')
+
+        const msgDiv = document.querySelector('.message');
+        const loginBtn = document.getElementById('login')
+        const form = document.getElementById('login-form')
+
+        loginBtn.addEventListener('click', async function(e){
+            e.preventDefault()
+            try {
+                const email = form.email.value
+                const password = form.password.value
+
+                const details = {email, password}
+                let formBody = [];
+                for (let property in details) {
+                    let encodedKey = encodeURIComponent(property);
+                    let encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+
+                const res = await fetch('/users/login', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+                    body: formBody
+                })
+            
+                const data = await res.json()
+
+                if (data.token){
+                    location.assign('/snipper')
+                } 
+
+                else if (data.error){
+                    msgDiv.innerHTML = `<div class="alert alert-danger" role="alert">${data.error}</div>`
+                }
+            }
+            catch (error){
+                console.log(error)
+            }
+        })
+    </script>
+</body>
+</html>

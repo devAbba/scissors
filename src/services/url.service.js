@@ -59,6 +59,9 @@ exports.history = async function(userId){
 exports.getUrl = async function(shortId){
     try {
         const shortUrl = await Url.findOne({short: shortId})
+        shortUrl.clicks++
+        shortUrl.save()
+
         return shortUrl 
     } catch (error){
         console.log(error)

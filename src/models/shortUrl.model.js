@@ -10,6 +10,11 @@ const urlSchema = new Schema({
         type: String,
         default: shortId.generate
     },
+    clicks: {
+        type: Number,
+        default: 0,
+        required: true
+    },
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'User',

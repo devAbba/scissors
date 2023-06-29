@@ -10,7 +10,7 @@ Scissor also allows users to customize their shortened URLs. Users can choose th
 Scissor allows users to also generate QR codes for the shortened URLs. Users can download the QR code image and use it 
 
 ## Base URL
-- somehostsite.com
+- https://scissors-07cy.onrender.com
 
 
 ## Models
